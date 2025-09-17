@@ -4,8 +4,8 @@
   font-weight: 400;
 
   color-scheme: light dark;
-  color: rgba(255, 255, 255, 0.87);
-  background-color: #242424;
+  --oc-maroon: #7e3748;
+  --oc-white: #fff;
 
   font-synthesis: none;
   text-rendering: optimizeLegibility;
@@ -24,16 +24,59 @@ a:hover {
 
 body {
   margin: 0;
-  display: flex;
-  place-items: center;
+  background: var(--oc-white);
+  color: var(--oc-maroon);
   min-width: 320px;
   min-height: 100vh;
+  font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
 }
 
-h1 {
-  font-size: 3.2em;
-  line-height: 1.1;
+.oc-header {
+  background: var(--oc-maroon);
+  color: var(--oc-white);
+  padding: 2rem 1rem 1rem 1rem;
+  text-align: center;
+  border-radius: 0.5rem 0.5rem 0 0;
+  margin-bottom: 2rem;
 }
+.oc-header h1 {
+  margin: 0;
+  font-size: 2.5rem;
+  letter-spacing: 2px;
+  font-weight: 700;
+}
+.oc-header h2 {
+  margin: 0.5rem 0 0 0;
+  font-size: 1.5rem;
+  font-weight: 400;
+}
+.oc-course-list {
+  background: var(--oc-white);
+  border-radius: 0 0 0.5rem 0.5rem;
+  box-shadow: 0 2px 16px rgba(126, 55, 72, 0.07);
+  max-width: 700px;
+  margin: 0 auto;
+  padding: 2rem;
+}
+table {
+  width: 100%;
+  border-collapse: collapse;
+}
+th, td {
+  padding: 0.75rem 1rem;
+  text-align: left;
+  border-bottom: 1px solid #eee;
+}
+th {
+  background: var(--oc-maroon);
+  color: var(--oc-white);
+  font-weight: 600;
+  font-size: 1.1rem;
+}
+tbody tr:hover {
+  background: #f6f0ff;
+}
+
 
 button {
   border-radius: 8px;
