@@ -1,22 +1,17 @@
-<script setup>
-import MainPage from './components/main-page.vue'
-</script>
-
 <template>
-  <MainPage />
+  <div>
+    <header class="oc-header">
+      <h1>OCU Courses</h1>
+      <h2>Browse offerings by department</h2>
+    </header>
+
+    <section class="oc-course-list">
+      <CoursesList />
+    </section>
+  </div>
 </template>
 
-<style scoped>
-.logo {
-  height: 6em;
-  padding: 1.5em;
-  will-change: filter;
-  transition: filter 300ms;
-}
-.logo:hover {
-  filter: drop-shadow(0 0 2em #646cffaa);
-}
-.logo.vue:hover {
-  filter: drop-shadow(0 0 2em #42b883aa);
-}
-</style>
+<script>
+import CoursesList from './components/CoursesList.vue'
+export default { components: { CoursesList } }
+</script>
