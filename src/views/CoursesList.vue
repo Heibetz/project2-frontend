@@ -2,9 +2,13 @@
 import { ref, onMounted, computed } from 'vue'
 import http from '../services/http'
 
+import AddCourseModal from './AddCourseModal.vue'
+
 const courses = ref([])
 const loading = ref(true)
 const error = ref('')
+
+const showAddModal = ref(false)
 
 // Explicit columns to display
 const columnDefs = [
@@ -26,6 +30,28 @@ onMounted(async () => {
     loading.value = false
   }
 })
+
+async function addCourse(course) {
+  try {
+    // Save to backend
+    const { data } = await http.post('/courses', course)
+    // Add to local list (assume backend returns the new course)
+  courses.value.push(data)
+    // Sort alphabetically by course number
+    courses.value.sort((a, b) => {
+      // If courseNumber is numeric, sort numerically, else string compare
+      const aNum = Number(a.courseNumber)
+      const bNum = Number(b.courseNumber)
+      if (!isNaN(aNum) && !isNaN(bNum)) {
+        return aNum - bNum
+      }
+      return String(a.courseNumber).localeCompare(String(b.courseNumber))
+    })
+  showAddModal.value = false
+  } catch (e) {
+    alert(e?.response?.data?.message || e?.message || 'Failed to add course.')
+  }
+}
 </script>
 
 <template>
@@ -34,6 +60,8 @@ onMounted(async () => {
       <h1>Oklahoma Christian University</h1>
       <h2>Course Catalog</h2>
     </div>
+
+    <button class="add-btn" @click="showAddModal = true">Add Course</button>
 
     <div class="oc-course-list">
       <div v-if="loading">Loading courses…</div>
@@ -58,10 +86,27 @@ onMounted(async () => {
         <div v-else>No courses found.</div>
       </template>
     </div>
+
+    <AddCourseModal v-if="showAddModal" @save="addCourse" @close="showAddModal = false" />
   </div>
 </template>
 
 <style scoped>
 /* Ensure large lists are scrollable within the card area */
 .oc-course-list { max-height: 70vh; overflow: auto; }
+
+.add-btn {
+  margin: 1em 0;
+  padding: 0.5em 1.5em;
+  background: #1976d2;
+  color: #fff;
+  border: none;
+  border-radius: 4px;
+  font-size: 1em;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+.add-btn:hover {
+  background: #1565c0;
+}
 </style>
