@@ -8,5 +8,5 @@ module.exports = {
     host: 'localhost',
     port: 8081
   },
-  publicPath: process.env.NODE_ENV === 'development' ? '/' : '/tutorial-frontend-1/',
+  publicPath: process.env.NODE_ENV === 'development' ? '/' : '/seiv2025/p2/t5/',
 }
