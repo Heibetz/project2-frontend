@@ -2,7 +2,7 @@ import axios from 'axios'
 
 // Axios instance for API calls; with Vite proxy, '/api' forwards to backend
 const http = axios.create({
-  baseURL: '/api',
+  baseURL: '/courses-t5',
   headers: {
     'Content-Type': 'application/json',
   },
