@@ -1,6 +1,8 @@
 <script setup>
 import { ref, onMounted, computed } from 'vue'
 import http from '../services/http'
+import ViewCourse from './ViewCourse.vue'
+
 
 import AddCourseModal from './AddCourseModal.vue'
 import EditCourseModal from './EditCourseModal.vue'
@@ -9,6 +11,21 @@ const courses = ref([])
 const loading = ref(true)
 const error = ref('')
 
+// drawer state
+const drawerOpen = ref(false)
+const selectedId = ref(null)
+
+function viewCourse(id) {
+  console.log('[viewCourse] clicked', id)
+  selectedId.value = id
+  drawerOpen.value = true
+}
+function closeDrawer() {
+  drawerOpen.value = false
+}
+function editCourse(id) {
+  console.log('Edit course', id)
+}
 const showAddModal = ref(false)
 const showEditModal = ref(false)
 const courseToEdit = ref(null)
@@ -130,15 +147,15 @@ async function updateCourse(updatedCourse) {
             </tr>
           </thead>
           <tbody>
-            <tr v-for="(course, idx) in courses" :key="course.id ?? course.courseNumber ?? idx">
+            <tr v-for="(course, idx) in courses" :key="course.id ?? course.courseNumber ?? idx" @click="viewCourse(course.id)" class="cursor-pointer hover:bg-gray-50">
               <td>{{ course.dept }}</td>
               <td>{{ course.courseNumber }}</td>
               <td>{{ course.name }}</td>
               <td>{{ course.hours }}</td>
               <td>{{ course.level }}</td>
               <td class="actions">
-                <button class="edit-btn" @click="openEditModal(course)">Edit</button>
-                <button class="delete-btn" @click="deleteCourse(course.id)">Delete</button>
+                <button class="edit-btn" @click.stop="openEditModal(course)">Edit</button>
+                <button class="delete-btn" @click.stop="deleteCourse(course.id)">Delete</button>
               </td>
             </tr>
           </tbody>
@@ -146,6 +163,13 @@ async function updateCourse(updatedCourse) {
         <div v-else>No courses found.</div>
       </template>
     </div>
+    <!-- Drawer component for viewing a single course -->
+    <ViewCourse
+      :open="drawerOpen"
+      :courseId="selectedId"
+      @close="closeDrawer"
+      @edit="editCourse"
+    />
 
     <AddCourseModal v-if="showAddModal" @save="addCourse" @close="showAddModal = false" />
     <EditCourseModal 
