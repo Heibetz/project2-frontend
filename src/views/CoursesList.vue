@@ -34,12 +34,26 @@ onMounted(async () => {
   }
 })
 
+const duplicateWarning = ref('')
+
 async function addCourse(course) {
+  // Check for duplicate (case-insensitive)
+  const exists = courses.value.some(c =>
+    c.dept.toUpperCase() === course.dept.toUpperCase() &&
+    c.courseNumber.toUpperCase() === course.courseNumber.toUpperCase()
+  )
+  if (exists) {
+    duplicateWarning.value = 'A course with this Department and Course Number already exists.'
+    showAddModal.value = true // keep modal open
+    return
+  } else {
+    duplicateWarning.value = ''
+  }
   try {
     // Save to backend
     const { data } = await http.post('/courses', course)
     // Add to local list (assume backend returns the new course)
-  courses.value.push(data)
+    courses.value.push(data)
     // Sort alphabetically by course number
     courses.value.sort((a, b) => {
       // If courseNumber is numeric, sort numerically, else string compare
@@ -50,9 +64,12 @@ async function addCourse(course) {
       }
       return String(a.courseNumber).localeCompare(String(b.courseNumber))
     })
-  showAddModal.value = false
+    showAddModal.value = false
   } catch (e) {
-    alert(e?.response?.data?.message || e?.message || 'Failed to add course.')
+    duplicateWarning.value = e?.response?.data?.message?.includes('duplicate')
+      ? 'A course with this Department and Course Number already exists.'
+      : (e?.response?.data?.message || e?.message || 'Failed to add course.')
+    showAddModal.value = true
   }
 }
 
@@ -138,6 +155,7 @@ async function updateCourse(updatedCourse) {
       @submit="updateCourse"
       @close="showEditModal = false"
     />
+  <AddCourseModal v-if="showAddModal" @save="addCourse" @close="showAddModal = false" :duplicate-warning="duplicateWarning" />
   </div>
 </template>
 
