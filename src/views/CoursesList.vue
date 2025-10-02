@@ -154,8 +154,8 @@ async function updateCourse(updatedCourse) {
               <td>{{ course.hours }}</td>
               <td>{{ course.level }}</td>
               <td class="actions">
-                <button class="edit-btn" @click="openEditModal(course)">Edit</button>
-                <button class="delete-btn" @click="deleteCourse(course.id)">Delete</button>
+                <button class="edit-btn" @click.stop="openEditModal(course)">Edit</button>
+                <button class="delete-btn" @click.stop="deleteCourse(course.id)">Delete</button>
               </td>
             </tr>
           </tbody>

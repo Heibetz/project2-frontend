@@ -72,10 +72,6 @@
         </div>
 
         <div style="margin-top:16px; display:flex; gap:12px;">
-          <button
-            style="padding:8px 12px; border-radius:6px; color:#fff; background:#6b0f1a;"
-            @click="$emit('edit', course.id)"
-          >Edit</button>
 
           <button
             style="padding:8px 12px; border-radius:6px; border:1px solid #ddd;"

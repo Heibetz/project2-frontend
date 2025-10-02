@@ -55,6 +55,14 @@
             placeholder="Course Level"
           >
         </div>
+        <div class="form-group">
+          <label for="description">Description:</label>
+          <textarea
+            id="description"
+            v-model="formData.description"
+            placeholder="Course Description"
+          ></textarea>
+        </div>
         <div class="button-group">
           <button type="submit" class="submit-btn">Update</button>
           <button type="button" class="cancel-btn" @click="handleCancel">Cancel</button>
@@ -85,7 +93,8 @@ export default {
         courseNumber: '',
         name: '',
         hours: 0,
-        level: ''
+        level: '',
+        description: ''
       }
     }
   },
