@@ -143,7 +143,7 @@ async function updateCourse(updatedCourse) {
 
 <style scoped>
 /* Ensure large lists are scrollable within the card area */
-.oc-course-list { max-height: 70vh; overflow: auto; }
+.oc-course-list { max-height: 70vh; max-width: 100%; overflow: auto; }
 
 .add-btn {
   margin: 1em 0;
