@@ -1,10 +1,28 @@
 <script setup>
 import { ref, onMounted, computed } from 'vue'
 import http from '../services/http'
+import ViewCourse from './ViewCourse.vue'
+
 
 const courses = ref([])
 const loading = ref(true)
 const error = ref('')
+
+// drawer state
+const drawerOpen = ref(false)
+const selectedId = ref(null)
+
+function viewCourse(id) {
+  console.log('[viewCourse] clicked', id)
+  selectedId.value = id
+  drawerOpen.value = true
+}
+function closeDrawer() {
+  drawerOpen.value = false
+}
+function editCourse(id) {
+  console.log('Edit course', id)
+}
 
 // Explicit columns to display
 const columnDefs = [
@@ -46,7 +64,7 @@ onMounted(async () => {
             </tr>
           </thead>
           <tbody>
-            <tr v-for="(course, idx) in courses" :key="course.id ?? course.courseNumber ?? idx">
+            <tr v-for="(course, idx) in courses" :key="course.id ?? course.courseNumber ?? idx" @click="viewCourse(course.id)" class="cursor-pointer hover:bg-gray-50">
               <td>{{ course.dept }}</td>
               <td>{{ course.courseNumber }}</td>
               <td>{{ course.name }}</td>
@@ -58,6 +76,13 @@ onMounted(async () => {
         <div v-else>No courses found.</div>
       </template>
     </div>
+    <!-- Drawer component for viewing a single course -->
+    <ViewCourse
+      :open="drawerOpen"
+      :courseId="selectedId"
+      @close="closeDrawer"
+      @edit="editCourse"
+    />
   </div>
 </template>
 
