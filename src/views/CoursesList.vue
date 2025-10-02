@@ -3,12 +3,15 @@ import { ref, onMounted, computed } from 'vue'
 import http from '../services/http'
 
 import AddCourseModal from './AddCourseModal.vue'
+import EditCourseModal from './EditCourseModal.vue'
 
 const courses = ref([])
 const loading = ref(true)
 const error = ref('')
 
 const showAddModal = ref(false)
+const showEditModal = ref(false)
+const courseToEdit = ref(null)
 
 // Explicit columns to display
 const columnDefs = [
@@ -69,6 +72,41 @@ async function addCourse(course) {
     showAddModal.value = true
   }
 }
+
+async function deleteCourse(id) {
+  if (!confirm('Are you sure you want to delete this course?')) return
+  
+  try {
+    await http.delete(`/courses/${id}`)
+    courses.value = courses.value.filter(c => c.id !== id)
+  } catch (e) {
+    alert(e?.response?.data?.message || e?.message || 'Failed to delete course.')
+  }
+}
+
+function openEditModal(course) {
+  courseToEdit.value = { ...course }
+  showEditModal.value = true
+}
+
+async function updateCourse(updatedCourse) {
+  try {
+    const response = await http.put(`/courses/${updatedCourse.id}`, updatedCourse)
+    if (response.data) {
+      // Update the course in the local list
+      const index = courses.value.findIndex(c => c.id === updatedCourse.id)
+      if (index !== -1) {
+        courses.value[index] = response.data
+      }
+      showEditModal.value = false
+    }
+  } catch (e) {
+    // Only show alert for actual errors (not 404 responses)
+    if (e?.response?.status !== 404) {
+      alert(e?.message || 'Failed to update course.')
+    }
+  }
+}
 </script>
 
 <template>
@@ -88,6 +126,7 @@ async function addCourse(course) {
           <thead>
             <tr>
               <th v-for="col in columnDefs" :key="col.key">{{ col.label }}</th>
+              <th>Actions</th>
             </tr>
           </thead>
           <tbody>
@@ -97,6 +136,10 @@ async function addCourse(course) {
               <td>{{ course.name }}</td>
               <td>{{ course.hours }}</td>
               <td>{{ course.level }}</td>
+              <td class="actions">
+                <button class="edit-btn" @click="openEditModal(course)">Edit</button>
+                <button class="delete-btn" @click="deleteCourse(course.id)">Delete</button>
+              </td>
             </tr>
           </tbody>
         </table>
@@ -104,13 +147,21 @@ async function addCourse(course) {
       </template>
     </div>
 
+    <AddCourseModal v-if="showAddModal" @save="addCourse" @close="showAddModal = false" />
+    <EditCourseModal 
+      v-if="showEditModal" 
+      :show="showEditModal"
+      :course="courseToEdit"
+      @submit="updateCourse"
+      @close="showEditModal = false"
+    />
   <AddCourseModal v-if="showAddModal" @save="addCourse" @close="showAddModal = false" :duplicate-warning="duplicateWarning" />
   </div>
 </template>
 
 <style scoped>
 /* Ensure large lists are scrollable within the card area */
-.oc-course-list { max-height: 70vh; overflow: auto; }
+.oc-course-list { max-height: 70vh; max-width: 100%; overflow: auto; }
 
 .add-btn {
   margin: 1em 0;
@@ -125,5 +176,36 @@ async function addCourse(course) {
 }
 .add-btn:hover {
   background: #1565c0;
+}
+
+.actions {
+  display: flex;
+  gap: 0.5em;
+}
+
+.edit-btn, .delete-btn {
+  padding: 0.5em 1.5em;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background 0.2s;
+  color: white;
+  font-size: 1em;
+}
+
+.edit-btn {
+  background: #1976d2;
+}
+
+.edit-btn:hover {
+  background: #1565c0;
+}
+
+.delete-btn {
+  background: #f44336;
+}
+
+.delete-btn:hover {
+  background: #d32f2f;
 }
 </style>
