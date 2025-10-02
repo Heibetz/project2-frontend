@@ -2,6 +2,9 @@
 import { ref } from 'vue'
 
 const emit = defineEmits(['save', 'close'])
+const props = defineProps({
+  duplicateWarning: { type: String, default: '' }
+})
 
 const form = ref({
   dept: '',
@@ -35,6 +38,7 @@ function save() {
     <div class="modal">
       <h3>Add New Course</h3>
       <form @submit.prevent="save">
+        <div v-if="props.duplicateWarning" class="duplicate-warning">{{ props.duplicateWarning }}</div>
         <div>
           <label>Department</label>
           <input v-model="form.dept" style="text-transform:uppercase" @input="form.dept = form.dept.toUpperCase()" />
@@ -102,4 +106,13 @@ input {
 }
 .err { color: #b00020; font-size: 0.9em; }
 .modal-actions { margin-top: 1em; display: flex; gap: 1em; }
+.duplicate-warning {
+  color: #b00020;
+  background: #ffeaea;
+  border: 1px solid #b00020;
+  padding: 0.7em 1em;
+  border-radius: 4px;
+  margin-bottom: 1em;
+  font-weight: 600;
+}
 </style>
